@@ -1,0 +1,32 @@
+.err {
+    font-size: small;
+    color: red;
+}
+
+.asterisk {
+    font-size: small;
+    color: red;
+}
+
+.sizeTable {
+    max-height: 200px;
+    display: block;
+    width: 480px;
+    overflow-y: scroll
+}
+
+thead {
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.btMargin {
+    margin-top: 40px;
+}
+
+.full-width {
+    width: 100%;
+}
+

@@ -1,0 +1,23 @@
+.err {
+    font-size: small;
+    color: red;
+}
+
+.asterisk {
+    font-size: small;
+    color: red;
+}
+
+.sizeTable {
+    max-height: 200px;
+    display: block;
+    width: 420px;
+    overflow-y: scroll
+}
+
+thead {
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
