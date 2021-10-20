@@ -43,7 +43,7 @@ const row = (r, i, headers, handleRemove, startEditing, editIdx, handleChange, s
 const Table = ({ data, headers, handleRemove, startEditing, editIdx, handleChange, stopEditing }) => (
   < div >
     
-      <table className="table sizeTable ">
+      <table className="table sizeTable "> 
         <thead>
           <tr>
             <th scope="col">#</th>
