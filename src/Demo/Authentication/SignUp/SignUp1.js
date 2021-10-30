@@ -5,6 +5,7 @@ import './../../../assets/scss/style.scss';
 import Aux from "../../../hoc/_Aux";
 import Breadcrumb from "../../../App/layout/AdminLayout/Breadcrumb";
 import AuthService from './../../../services/auth.service'
+
 class SignUp1 extends React.Component {
     constructor(props) {
         super(props);
@@ -34,7 +35,7 @@ class SignUp1 extends React.Component {
         
         AuthService.login(this.state.username, this.state.password).then(
             () => {
-                this.props.history.push("/dashboard/default");
+                this.props.history.push("/register/stop-bus");
                 window.location.reload();
             }, error => {
                 console.log(error);

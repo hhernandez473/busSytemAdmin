@@ -2,8 +2,8 @@ import axios from "axios";
 import TokenService from "./token.service";
 
 const instance = axios.create({
-  //baseURL: "http://localhost:8080/api",
-  baseURL: "https://appbus-backend.herokuapp.com/api",
+  baseURL: "http://localhost:8080/api",
+  //baseURL: "https://appbus-backend.herokuapp.com/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -36,7 +36,7 @@ instance.interceptors.response.use(
         originalConfig._retry = true;
 
         try {
-          const rs = await instance.post("/auth/refreshtoken", {
+          const rs = await instance.post("/auth", {
             refreshToken: TokenService.getLocalRefreshToken(),
           });
 

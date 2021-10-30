@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { Row, Col, Card, Form, Button, Table } from 'react-bootstrap';
 import Aux from "../../hoc/_Aux";
 import controlService from '../../services/control.service';
 import { toast, ToastContainer } from "react-toastify";
@@ -21,18 +21,22 @@ class RegisterRouter extends React.Component {
                 departament: null,
                 municipality: null,
                 town: null,
-                route: ''
+                route: '',
+                routeID: '',
+                btn: false
             },
             countryList: [],
             depList: [],
             muniList: [],
-            townList: []
+            townList: [],
+            routeList: []
         }
 
         this.getCountries();
         this.getDepartament();
         this.getMunicipality();
         this.getTown();
+        this.getRoutes();
     }
 
     handleChange = e => {
@@ -123,6 +127,7 @@ class RegisterRouter extends React.Component {
             // this.setState({ townList: res.data.town });
             // this.setList({name: "town", value: res.data.town[0]._id });
             toast.success("Ruta creada correctamente.");
+            this.getRoutes();
         }).catch(error => {
            toast.error(error.data.msg);
         });
@@ -172,6 +177,28 @@ class RegisterRouter extends React.Component {
 
     }
 
+    getRoutes(){
+        controlService.get("/route").then((res) => {
+            this.setState({ routeList: res.data.route });
+           
+        }).catch(error => {
+            console.log(error);
+        });
+    }
+
+    editRoute = (route) => {
+        const { _id,  name } = route;
+        this.setState({
+            btn: true,
+            form: {
+                town: route.town._id,
+                route: name,
+                routeID: _id
+            }
+        });
+        this.setList({name: "town", value: route.town._id });
+    }
+
     render() {
         const { form, formErrors, countryList } = this.state;
         return (
@@ -184,6 +211,40 @@ class RegisterRouter extends React.Component {
                                 <Card.Body>
 
                                     <hr />
+                                    <Row>
+                                        <Col md={12}>
+
+                                            <Table striped bordered hover size="sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Aldea/Zona</th>
+                                                        <th>Nombre Ruta</th>
+                                                        <th>Editar</th>
+                                                        <th>Eliminar</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {
+                                                        this.state.routeList.map((route, i) => (
+                                                            <tr key={i}>
+                                                                <td key={i + 1}>{i + 1}</td>
+                                                                <td key={route.town._id}>{route.town.name}</td>
+                                                                <td key={route.name}>{route.name}</td>
+                                                                <td><i className="material-icons btn btn-warning"
+                                                                    onClick={() => this.editRoute(route)}>edit</i>
+                                                                </td>
+                                                                <td><i className="material-icons btn btn-danger"
+                                                                    onClick={() => this.getRoutes(route)}>delete</i>
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                    }
+                                                </tbody>
+                                            </Table>
+                                        </Col>
+
+                                    </Row>
                                     <Row>
 
                                         <Col md={4}>

@@ -1,5 +1,9 @@
 const headers = [
     {
+        name: 'Conductor',
+        prop: 'driverAssigned'
+    },
+    {
         name: 'Hora de Salida',
         prop: 'departureTime'
     },

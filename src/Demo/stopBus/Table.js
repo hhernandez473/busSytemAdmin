@@ -1,6 +1,6 @@
 import React from 'react';
 import '../Schedule/index.scss';
-
+import { Table } from 'react-bootstrap';
 const row = (r, i, headers, handleRemove, startEditing, editIdx, handleChange, stopEditing) => {
 
   const currentlyEditing = editIdx === i
@@ -8,7 +8,7 @@ const row = (r, i, headers, handleRemove, startEditing, editIdx, handleChange, s
   return (
 
     <tr key={`tr-${i}`}>
-      <td>{i}</td>
+      <td>{i+1}</td>
       {headers.map((h, k) => (
         <td key={`td-${k}`}>
           {currentlyEditing ?
@@ -40,35 +40,35 @@ const row = (r, i, headers, handleRemove, startEditing, editIdx, handleChange, s
 
 
 
-const Table = ({ data, headers, handleRemove, startEditing, editIdx, handleChange, stopEditing }) => (
+const Table2 = ({ data, headers, handleRemove, startEditing, editIdx, handleChange, stopEditing }) => (
   < div >
-    
-      <table className="table sizeTable "> 
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            {headers.map((h, i) =>
-              <th key={`th-${i}`} scope="col">{h.name}</th>
-            )}
-            <th scope="col"></th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody >
-          {data.map((r, i) =>
-            row(r, i, headers,
-              handleRemove,
-              startEditing,
-              editIdx,
-              handleChange,
-              stopEditing))}
-        </tbody>
-      </table>
-    
+
+    <Table className="sizeTable "  striped  hover size="sm">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          {headers.map((h, i) =>
+            <th key={`th-${i}`} scope="col">{h.name}</th>
+          )}
+          <th scope="col"></th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody >
+        {data.map((r, i) =>
+          row(r, i, headers,
+            handleRemove,
+            startEditing,
+            editIdx,
+            handleChange,
+            stopEditing))}
+      </tbody>
+    </Table>
+
   </div >
 )
 
 
-export default Table
+export default Table2
 
 

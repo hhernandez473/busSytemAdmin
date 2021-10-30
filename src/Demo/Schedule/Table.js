@@ -1,8 +1,8 @@
 import React from 'react';
 import '../Schedule/index.scss';
-
+import { Form } from 'react-bootstrap';
 const row = (r, i, headers, handleRemove, startEditing, editIdx, handleChange, stopEditing) => {
-
+  
   const currentlyEditing = editIdx === i
 
   return (
@@ -12,13 +12,32 @@ const row = (r, i, headers, handleRemove, startEditing, editIdx, handleChange, s
       {headers.map((h, k) => (
         <td key={`td-${k}`}>
           {currentlyEditing ?
-            <input
-              type="text"
-              className="form-control"
-              onChange={(e) => handleChange(e, h.prop, i)}
-              name={h.prop}
-              value={r[h.prop]}
-            /> : r[h.prop]}
+            h.prop == 'driverAssigned' ?
+              <Form.Control as="select"
+                name="driverAssigned"
+                onChange={
+                  (e) => handleChange(e, h.prop, i)
+                } >
+                {r.userList.map((res, index) =>
+                  <option value={JSON.stringify(res)} key={index} > {res.name} </option>
+                )}
+
+              </Form.Control>
+              :
+              <input
+                type="text"
+                className="form-control"
+                onChange={(e) => handleChange(e, h.prop, i)}
+                name={h.prop}
+                value={r[h.prop]}
+              />
+            :
+            h.prop == 'driverAssigned'
+              ?
+              r[h.prop].name
+              :
+              r[h.prop]
+          }
         </td>
       ))}
 
@@ -40,7 +59,7 @@ const row = (r, i, headers, handleRemove, startEditing, editIdx, handleChange, s
 
 
 
-const Table = ({ data, headers, handleRemove, startEditing, editIdx, handleChange, stopEditing }) => (
+const Table2 = ({ data, headers, handleRemove, startEditing, editIdx, handleChange, stopEditing }) => (
   < div >
     <div className="card ">
       <table className="table sizeTable ">
@@ -61,7 +80,8 @@ const Table = ({ data, headers, handleRemove, startEditing, editIdx, handleChang
               startEditing,
               editIdx,
               handleChange,
-              stopEditing))}
+              stopEditing
+            ))}
         </tbody>
       </table>
     </div>
@@ -69,6 +89,6 @@ const Table = ({ data, headers, handleRemove, startEditing, editIdx, handleChang
 )
 
 
-export default Table
+export default Table2
 
 

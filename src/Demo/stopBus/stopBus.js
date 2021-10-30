@@ -1,11 +1,11 @@
 import React from 'react';
-import { Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { Row, Col, Card, Form, Button, Table } from 'react-bootstrap';
 
 import controlService from '../../services/control.service';
 
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Table from './Table';
+import Table2 from './Table';
 import headers from './tableData';
 import TableForm from './TableForm';
 
@@ -13,14 +13,47 @@ class StopBus extends React.Component {
     constructor() {
         super();
         this.getRoutes();
+        this.getStopBus();
     }
 
     state = {
         data: [],
         headers: headers,
         editIdx: -1,
-        routeList: []
+        routeList: [],
+        stopBusList: [],
+        stopBusId: '',
+        btn: false
     };
+
+    getStopBus() {
+        controlService.get("/stopBus").then((res) => {
+            this.setState({ stopBusList: res.data.stopBus });
+
+
+        }).catch(error => {
+            console.log(error);
+        });
+    }
+
+    editStopBus = (stopbus) => {
+       
+        const editList = stopbus.detail.map(s =>
+            (
+                {
+                    name: s.name,
+                    latitude: s.latitude,
+                    longitude: s.longitude
+                }
+            )
+        );
+        this.setState({
+            btn: true,
+            data: editList,
+            stopBusId: stopbus._id
+        })
+        console.log(editList);
+    }
 
 
     addRow = (item) => {
@@ -30,6 +63,8 @@ class StopBus extends React.Component {
             data: nextState
         })
     }
+
+
 
     handleRemove = (i) => {
         this.setState({
@@ -76,30 +111,57 @@ class StopBus extends React.Component {
 
     createStopBus = () => {
         const route = this.state.route;
-        console.log(route);
-
-        //     //console.log(this.state.data);
-        if (this.state.data.length <= 0){
+        
+        if (this.state.data.length <= 0) {
             toast.error("Ingrese paradas de bus");
             return;
         }
-            
-        const detail = this.state.data.map(d => ({ latitude: d.latitude, longitude: d.longitude }));
-        console.log(detail);
 
-        //     if (!name) {
-        //         toast.error("Ingrese nombre de Horario");
-        //     }
-            controlService.post("/stopBus", { route, detail }).then((res) => {
-                // this.setState({ townList: res.data.town });
-                // this.setList({name: "town", value: res.data.town[0]._id });
-                this.setState({
-                    data: []
-                })
-                toast.success("Paradas de bus creadas correctamente.");
-            }).catch(error => {
-                toast.error(JSON.stringify(error.data.errors, null , 2));
-            });
+        const detail = this.state.data.map(d => ({name: d.name, latitude: d.latitude, longitude: d.longitude }));
+
+
+       
+        controlService.post("/stopBus", { route, detail }).then((res) => {
+         
+            this.cleanForm();
+            toast.success("Paradas de bus creadas correctamente.");
+        }).catch(error => {
+            toast.error(JSON.stringify(error.data.errors, null, 2));
+        });
+    }
+
+    stopBusModify= ()=>{
+        if (this.state.data.length <= 0 || this.state.stopBusId <= 0) {
+            toast.error("Ingrese paradas de bus");
+            return;
+        }
+        const detail = this.state.data.map(d => ({name: d.name, latitude: d.latitude, longitude: d.longitude }));
+
+        controlService.put(`/stopBus/${this.state.stopBusId}`, {  detail }).then((res) => {
+            this.cleanForm();
+            toast.success("Paradas de bus modificadas correctamente.");
+        }).catch(error => {
+            toast.error(JSON.stringify(error.data.errors, null, 2));
+        });
+    }
+
+    stopBusDel = (stopbus) =>{
+        controlService.del(`/stopBus/${stopbus._id}`).then((res) => {
+            this.cleanForm();
+            toast.warning("Parada de bus eliminada correctamente.");
+        }).catch(error => {
+            toast.error(JSON.stringify(error.data.errors, null, 2));
+        });
+    }
+
+    cleanForm = ()=>{
+        this.setState({
+            data: [],
+            stopBusList: [],
+            btn: false
+
+        });
+        this.getStopBus();
     }
 
 
@@ -111,6 +173,38 @@ class StopBus extends React.Component {
                     <Col md={12}>
                         <Card>
                             <Card.Body>
+                                <Row>
+                                    <Col md={12}>
+
+                                        <Table striped bordered hover size="sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Ruta</th>
+                                                    <th>Editar</th>
+                                                    <th>Eliminar</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {
+                                                    this.state.stopBusList.map((stopBus, i) => (
+                                                        <tr key={i}>
+                                                            <td key={i + 1}>{i + 1}</td>
+                                                            <td key={stopBus.id}>{stopBus.route.name}</td>
+                                                            <td><i className="material-icons btn btn-warning"
+                                                                onClick={() => this.editStopBus(stopBus)}>edit</i>
+                                                            </td>
+                                                            <td><i className="material-icons btn btn-danger"
+                                                                onClick={() => this.stopBusDel(stopBus)}>delete</i>
+                                                            </td>
+                                                        </tr>
+                                                    ))
+                                                }
+                                            </tbody>
+                                        </Table>
+                                    </Col>
+
+                                </Row>
 
                                 <Row>
 
@@ -137,8 +231,14 @@ class StopBus extends React.Component {
                                     </Col>
                                     <Col md={6}  >
 
-                                        <Button variant="primary" onClick={this.createStopBus} className="btn-block" >
+                                        <Button variant="success" onClick={this.createStopBus} disabled={this.state.btn | this.state.data.length < 1} >
                                             Guardar
+                                        </Button>
+                                        <Button variant="warning" onClick={this.stopBusModify} disabled={!this.state.btn } >
+                                            Editar
+                                        </Button>
+                                        <Button variant="secondary" onClick={this.cleanForm}  >
+                                            Limpiar
                                         </Button>
                                     </Col>
                                 </Row>
@@ -150,8 +250,9 @@ class StopBus extends React.Component {
 
                                         />
                                     </Col>
-                                    <Col md={6}>
-                                        <Table
+                                    <Col md={6} >
+                                        <Table2
+                                        
                                             headers={headers}
                                             data={this.state.data}
                                             handleRemove={this.handleRemove}

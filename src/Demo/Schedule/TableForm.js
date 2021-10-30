@@ -1,11 +1,21 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Form } from 'react-bootstrap';
 import Aux from "../../hoc/_Aux";
+import controlService from '../../services/control.service';
 class TableForm extends React.Component {
+
+    constructor() {
+        super();
+        this.getUserList();
+    }
+
+
+
     state = {
         departureTime: '',
         returnTime: '',
-        name: '',
+        driverAssigned: '',
+        userList: [],
         errors: ''
     };
 
@@ -29,15 +39,17 @@ class TableForm extends React.Component {
     }
 
     handleInputChange = (e) => {
+        const { value } = e.target
         const name = e.target.name
+        
         this.setState({
-            [name]: e.target.value
+            [name]: (name == 'driverAssigned')?JSON.parse(value): value
         })
     }
 
     createRow = (e) => {
         e.preventDefault();
-        const {name} = this.state;
+        const { name } = this.state;
         const newItem = this.state
         const er = this.validateFields()
         if (!er) {
@@ -45,20 +57,32 @@ class TableForm extends React.Component {
             this.setState({
                 departureTime: '',
                 returnTime: '',
+                driverAssigned: '',
                 name: name,
                 errors: ''
             })
             e.currentTarget.reset()
-
+            this.getUserList();
         }
     }
 
     createSchedule = (e) => {
         e.preventDefault();
-        
+
         const newItem = this.state
-        e.currentTarget.reset()
+        e.currentTarget.reset();
+        this.getUserList();
         console.log(newItem);
+    }
+
+    getUserList() {
+        controlService.get("/usuarios").then((res) => {
+            this.setState({ userList: res.data.users, driverAssigned: res.data.users[0] });
+
+
+        }).catch(error => {
+            console.log(error);
+        });
     }
 
 
@@ -67,24 +91,7 @@ class TableForm extends React.Component {
         return (
             <>
                 <Aux>
-                    <Row>
-                        <Col>
-                            <form onSubmit={this.createSchedule} autoComplete="off" >
-                                <Row>
-                                    <Col md={12} className="mb-4">
-                                        <input type="text"
-                                            onChange={this.handleInputChange}
-                                            className="form-control"
-                                            placeholder="Nombre de Horario"
-                                            name="name" />
-                                    </Col>
 
-                                    
-                                </Row>
-
-                            </form>
-                        </Col>
-                    </Row>
                     <Row>
                         <Col>
 
@@ -94,6 +101,27 @@ class TableForm extends React.Component {
                                 </div>
                             }
                             <form onSubmit={this.createRow} autoComplete="off" >
+                                <Row>
+                                    <Col>
+                                        <Form.Group as={Row} controlId="exampleForm.ControlSelect1">
+                                            <Form.Label column sm="4">Conductores</Form.Label>
+                                            <Col sm="8">
+                                                <Form.Control as="select"
+                                                    name="driverAssigned"
+                                                    onChange={
+                                                        this.handleInputChange
+                                                    } >
+                                                    {this.state.userList.map((res, index) =>
+                                                        <option value={JSON.stringify(res)} key={index} > {res.name} </option>
+                                                    )}
+
+                                                </Form.Control>
+                                            </Col>
+
+
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
                                 <Row>
                                     <Col md={4}>
                                         <input type="text"

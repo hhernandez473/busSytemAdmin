@@ -97,14 +97,14 @@ class TableForm extends React.Component {
                                             onChange={this.handleInputChange}
                                             className="  form-control"
                                             placeholder="latitude"
-                                            name="latitude" />
+                                            name="latitude" step="any"  />
                                     </Col>
                                     <Col md={4}>
                                         <input type="number"
                                             onChange={this.handleInputChange}
                                             className=" form-control"
                                             placeholder="longitude"
-                                            name="longitude" />
+                                            name="longitude" step="any" />
                                     </Col>
                                     <Col md={4} >
                                         <button type="submit"
