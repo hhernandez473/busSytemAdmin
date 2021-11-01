@@ -1,7 +1,6 @@
 {
   "name": "datta-able-rv18.0.4",
   "version": "0.1.0",
-  "private": true,
   "homepage": " https://hhernandez473.github.io/busSytemAdmin/",
   "dependencies": {
     "@material-ui/core": "^4.12.3",
