@@ -13,10 +13,10 @@ const store = createStore(reducer);
 
 const app = (
     <Provider store={store}>
-        <HashRouter basename={config.basename}>
+        <BrowserRouter basename={config.basename}>
             {/* basename="/datta-able" */}
             <App />
-        </HashRouter>
+        </BrowserRouter>,
     </Provider>
 );
 
